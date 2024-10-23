@@ -10,13 +10,13 @@ Add the following dependency to your project:
 <dependency>
     <groupId>org.exploit</groupId>
     <artifactId>signalix</artifactId>
-    <version>0.1</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
 ### Gradle
 ```groovy
-implementation("org.exploit:signalix:0.1")
+implementation("org.exploit:signalix:0.1.1")
 ```
 
 ### Usage
