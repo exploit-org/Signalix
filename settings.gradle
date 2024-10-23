@@ -1,0 +1,3 @@
+rootProject.name = 'signalix'
+include 'signalix-kafka'
+

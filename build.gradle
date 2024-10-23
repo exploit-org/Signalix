@@ -1,0 +1,107 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'signing'
+    id 'tech.yanand.maven-central-publish' version '1.2.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:5.4.0'
+
+    implementation 'org.slf4j:slf4j-api:2.0.12'
+    api 'org.jetbrains:annotations:24.0.1'
+}
+
+ext {
+    projectName = "Signalix"
+    projectDescription = "Library for building event-driven applications"
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'signing'
+    apply plugin: 'maven-publish'
+    apply plugin: 'tech.yanand.maven-central-publish'
+
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    group = 'org.exploit'
+    version = '0.1'
+
+    afterEvaluate { p ->
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+
+                    pom {
+                        name = p.ext.projectName
+                        description = p.ext.projectDescription
+                        url = 'https://github.com/exploit-org/Signalix'
+
+                        licenses {
+                            license {
+                                name = 'BSD-2-Clause'
+                                url = 'https://github.com/exploit-org/Signalix/blob/main/LICENSE.md'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = '0'
+                                name = 'Martin Belov'
+                                email = 'martin@exploit.org'
+                            }
+                        }
+
+                        scm {
+                            connection = 'scm:git:https://github.com/exploit-org/Signalix.git'
+                            developerConnection = 'scm:git:ssh://github.com/exploit-org/Signalix.git'
+                            url = 'https://github.com/exploit-org/Signalix'
+                        }
+                    }
+                }
+            }
+
+            repositories {
+                maven {
+                    name = "Local"
+                    url = file("${buildDir}/repos/bundles")
+                }
+            }
+        }
+
+        signing {
+            sign publishing.publications.mavenJava
+        }
+
+        mavenCentral {
+            repoDir = layout.buildDirectory.dir('repos/bundles')
+
+            authToken = System.getenv("CENTRAL_MAVEN_TOKEN")
+
+            publishingType = 'USER_MANAGED'
+        }
+    }
+}
+
+jar {
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    from(configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
