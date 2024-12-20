@@ -10,13 +10,13 @@ Add the following dependency to your project:
 <dependency>
     <groupId>org.exploit</groupId>
     <artifactId>signalix</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 
 ### Gradle
 ```groovy
-implementation("org.exploit:signalix:0.1.1")
+implementation("org.exploit:signalix:0.1.3")
 ```
 
 ### Usage
@@ -58,7 +58,7 @@ public class MyListener implements Listener {
 You can also define event listener in a functional way:
 ```java
 public static void main(String[] args) {
-    EventScope scope = new EventScope();
+    var scope = new EventScope();
     
     scope.registerEvent(MyEvent.class, (e) -> {
         System.out.println("Handling event: " + e.getSampleData());
@@ -67,7 +67,8 @@ public static void main(String[] args) {
 ```
 
 #### Calling events
-Finally, we need to create an instance of `EventScope`, register the listener, and call our event.
+Finally, we need to create an instance of `EventScope`, register the listener, and call our event. All events are called in a non-blocking manner in a single event loop thread.
+
 ```java
 import org.exploit.signalix.manager.EventScope;
 
@@ -80,12 +81,6 @@ public class Main {
     }
 }
 ```
-
-To call event in a async way, use `callAsync`
-```java
-CompletableFuture<Void> call = scope.callAsync(new MyEvent(""));
-```
-___
 
 You can handle the same event in multiple methods.
 Event Handler's order can be controlled by priority, an event can extend `Cancellable` to stop further handlers execution.
@@ -142,6 +137,19 @@ public class MyListener implements Listener {
         System.out.println("Handling my event: " + e.getSampleData);
         e.setCancelled(true);
     }
+}
+```
+
+## Error handling
+In case of event execution error, `EventExecutionException` will be called as event:
+To handle the exception, simply define event handlers for `EventExecutionException`.
+```java
+@EventHandler
+public void onException(EventExecutionException exceptionEvent) {
+    var event = exceptionEvent.getEvent();
+    var exception = exceptionEvent.getException();
+    
+    // Handle exception
 }
 ```
 

@@ -1,3 +1,4 @@
 rootProject.name = 'signalix'
 include 'signalix-kafka'
+include 'signalix-objects'
 

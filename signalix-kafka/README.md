@@ -8,13 +8,13 @@ First add following dependency to your project:
 <dependency>
     <groupId>org.exploit</groupId>
     <artifactId>signalix-kafka</artifactId>
-    <version>0.1</version>
+    <version>0.1.3</version>
 </dependency>
 ```
 
 ### Gradle
 ```groovy
-implementation("org.exploit:signalix-kafka:0.1")
+implementation("org.exploit:signalix-kafka:0.1.3")
 ```
 
 ## Usage
@@ -60,7 +60,7 @@ Now simply register it as default listener:
 ```java
 public static void main(String[] args) {
     Map<String, String> kafkaProperties = new HashMap<String, String>();
-    KafkaEventScope kafkaEventScope = new KafkaEventScope(kafkaProperties);
+    var kafkaEventScope = new KafkaEventScope(kafkaProperties);
     
     kafkaEventScope.registerListener(new MyKafkaListener());
 }
@@ -101,7 +101,7 @@ Now you can call your event from KafkaEventScope:
 ```java
 public static void main(String[] args) {
     Map<String, String> kafkaProperties = new HashMap<String, String>();
-    KafkaEventScope kafkaEventScope = new KafkaEventScope(kafkaProperties);
+    var kafkaEventScope = new KafkaEventScope(kafkaProperties);
     
     kafkaEventScope.call(new MyEvent("Hello World!"));
 }
